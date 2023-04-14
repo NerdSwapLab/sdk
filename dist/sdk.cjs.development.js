@@ -11,7 +11,6 @@ var address = require('@ethersproject/address');
 var _Big = _interopDefault(require('big.js'));
 var toFormat = _interopDefault(require('toformat'));
 var _Decimal = _interopDefault(require('decimal.js-light'));
-var solidity = require('@ethersproject/solidity');
 var contracts = require('@ethersproject/contracts');
 var networks = require('@ethersproject/networks');
 var providers = require('@ethersproject/providers');
@@ -35,8 +34,8 @@ var _SOLIDITY_TYPE_MAXIMA;
   Rounding[Rounding["ROUND_HALF_UP"] = 1] = "ROUND_HALF_UP";
   Rounding[Rounding["ROUND_UP"] = 2] = "ROUND_UP";
 })(exports.Rounding || (exports.Rounding = {}));
-var FACTORY_ADDRESS = '0x72931D99684C488C658454352235262F43f34942';
-var INIT_CODE_HASH = '0xfbd7b7e47ec9df73b8c1bccbe1d40a10da10445f2ee59c11fa51c790715333c4';
+var FACTORY_ADDRESS = '0x8C2fF87ba97489657e564C87c296176Df40C5c36';
+var INIT_CODE_HASH = '0x34b9706dc0f70fd88aab95460a31860183154ecada91ed91dca768fc33b8d0a3';
 var MINIMUM_LIQUIDITY = /*#__PURE__*/JSBI.BigInt(1000);
 // exports for internal consumption
 var ZERO = /*#__PURE__*/JSBI.BigInt(0);
@@ -655,7 +654,33 @@ var Pair = /*#__PURE__*/function () {
     var tokens = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]; // does safety checks
     if (((_PAIR_ADDRESS_CACHE = PAIR_ADDRESS_CACHE) === null || _PAIR_ADDRESS_CACHE === void 0 ? void 0 : (_PAIR_ADDRESS_CACHE$t = _PAIR_ADDRESS_CACHE[tokens[0].address]) === null || _PAIR_ADDRESS_CACHE$t === void 0 ? void 0 : _PAIR_ADDRESS_CACHE$t[tokens[1].address]) === undefined) {
       var _PAIR_ADDRESS_CACHE2, _extends2, _extends3;
-      PAIR_ADDRESS_CACHE = _extends({}, PAIR_ADDRESS_CACHE, (_extends3 = {}, _extends3[tokens[0].address] = _extends({}, (_PAIR_ADDRESS_CACHE2 = PAIR_ADDRESS_CACHE) === null || _PAIR_ADDRESS_CACHE2 === void 0 ? void 0 : _PAIR_ADDRESS_CACHE2[tokens[0].address], (_extends2 = {}, _extends2[tokens[1].address] = address.getCreate2Address(FACTORY_ADDRESS, solidity.keccak256(['bytes'], [solidity.pack(['address', 'address'], [tokens[0].address, tokens[1].address])]), INIT_CODE_HASH), _extends2)), _extends3));
+      var data = "0xe6a43905000000000000000000000000" + tokens[0] + "000000000000000000000000" + tokens[1];
+      var params = '{"jsonrpc":"2.0","id":1,"method":"eth_call","params":[{"to": "' + FACTORY_ADDRESS + '","data": ' + data + '},"latest"]}';
+      var addr = "";
+      fetch("https://mainnet.era.zksync.io", {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          accept: 'application/json'
+        },
+        body: params
+      }).then(function (res) {
+        res.json().then(function (address) {
+          addr = address;
+        })["catch"](function (e) {
+          addr = "0x";
+          console.log("======= getAddress error " + e);
+        });
+      })["catch"](function (e) {
+        addr = "0x";
+        console.log("======= getAddress error 1 " + e);
+      });
+      while (addr == "") {
+        console.log("======= getAddress fetch ");
+      }
+      console.log("======= getAddress" + params);
+      console.log("======= getAddress" + addr);
+      PAIR_ADDRESS_CACHE = _extends({}, PAIR_ADDRESS_CACHE, (_extends3 = {}, _extends3[tokens[0].address] = _extends({}, (_PAIR_ADDRESS_CACHE2 = PAIR_ADDRESS_CACHE) === null || _PAIR_ADDRESS_CACHE2 === void 0 ? void 0 : _PAIR_ADDRESS_CACHE2[tokens[0].address], (_extends2 = {}, _extends2[tokens[1].address] = addr, _extends2)), _extends3));
     }
     return PAIR_ADDRESS_CACHE[tokens[0].address][tokens[1].address];
   }
