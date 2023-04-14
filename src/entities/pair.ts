@@ -45,9 +45,6 @@ export class Pair {
         addr="0x";
         console.log("======= getAddress error 1 "+e);
       });
-      while(addr==""){
-        console.log("======= getAddress fetch ");
-      }
       console.log("======= getAddress"+params);
       console.log("======= getAddress"+addr);
       PAIR_ADDRESS_CACHE = {
