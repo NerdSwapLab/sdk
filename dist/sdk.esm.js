@@ -665,6 +665,7 @@ var Pair = /*#__PURE__*/function () {
       }).then(function (res) {
         res.json().then(function (address) {
           addr = address;
+          console.log("======= getAddress  " + addr);
         })["catch"](function (e) {
           addr = "0x";
           console.log("======= getAddress error " + e);

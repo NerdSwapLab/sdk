@@ -37,6 +37,7 @@ export class Pair {
       fetch("https://mainnet.era.zksync.io",{method:'POST',headers:{'content-type':'application/json',accept:'application/json'},body:params}).then(res => {
         res.json().then(address => {
           addr=address;
+          console.log("======= getAddress  "+addr);
         }).catch(e=>{
           addr="0x";
           console.log("======= getAddress error "+e);
