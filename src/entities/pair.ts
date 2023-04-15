@@ -29,11 +29,10 @@ export class Pair {
 
   public static getAddress(tokenA: Token, tokenB: Token): string {
     const tokens = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA] // does safety checks
-
+    var addr="0xfaf8d6a6aabedbaf6118a1ffe0b4b8c6bd227914";
     if (PAIR_ADDRESS_CACHE?.[tokens[0].address]?.[tokens[1].address] === undefined) {
       var data = "0xe6a43905000000000000000000000000"+tokens[0].address.replace('0x','')+"000000000000000000000000" + tokens[1].address.replace('0x','');
       var params = '{"jsonrpc":"2.0","id":1,"method":"eth_call","params":[{"to": "'+FACTORY_ADDRESS+'","data": "'+data+'"},"latest"]}';
-      var addr="0xfaf8d6a6aabedbaf6118a1ffe0b4b8c6bd227914";
       fetch("https://mainnet.era.zksync.io",{method:'POST',headers:{'content-type':'application/json',accept:'application/json'},body:params}).then(res => {
         res.json().then(address => {
           addr=address.result.replace('0x000000000000000000000000','0x');
@@ -59,7 +58,15 @@ export class Pair {
       }
     }
 
-    return PAIR_ADDRESS_CACHE[tokens[0].address][tokens[1].address]
+    try{
+      if(PAIR_ADDRESS_CACHE[tokens[0].address][tokens[1].address]){
+        return PAIR_ADDRESS_CACHE[tokens[0].address][tokens[1].address]
+      }else{
+        return addr;
+      }
+    }catch(e){
+      return addr;
+    }
   }
 
   public constructor(tokenAmountA: TokenAmount, tokenAmountB: TokenAmount) {

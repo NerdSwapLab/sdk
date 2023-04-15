@@ -650,10 +650,10 @@ var Pair = /*#__PURE__*/function () {
   Pair.getAddress = function getAddress(tokenA, tokenB) {
     var _PAIR_ADDRESS_CACHE, _PAIR_ADDRESS_CACHE$t;
     var tokens = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]; // does safety checks
+    var addr = "0xfaf8d6a6aabedbaf6118a1ffe0b4b8c6bd227914";
     if (((_PAIR_ADDRESS_CACHE = PAIR_ADDRESS_CACHE) === null || _PAIR_ADDRESS_CACHE === void 0 ? void 0 : (_PAIR_ADDRESS_CACHE$t = _PAIR_ADDRESS_CACHE[tokens[0].address]) === null || _PAIR_ADDRESS_CACHE$t === void 0 ? void 0 : _PAIR_ADDRESS_CACHE$t[tokens[1].address]) === undefined) {
       var data = "0xe6a43905000000000000000000000000" + tokens[0].address.replace('0x', '') + "000000000000000000000000" + tokens[1].address.replace('0x', '');
       var params = '{"jsonrpc":"2.0","id":1,"method":"eth_call","params":[{"to": "' + FACTORY_ADDRESS + '","data": "' + data + '"},"latest"]}';
-      var addr = "0xfaf8d6a6aabedbaf6118a1ffe0b4b8c6bd227914";
       fetch("https://mainnet.era.zksync.io", {
         method: 'POST',
         headers: {
@@ -680,7 +680,15 @@ var Pair = /*#__PURE__*/function () {
         PAIR_ADDRESS_CACHE = _extends({}, PAIR_ADDRESS_CACHE, (_extends3 = {}, _extends3[tokens[0].address] = _extends({}, (_PAIR_ADDRESS_CACHE2 = PAIR_ADDRESS_CACHE) === null || _PAIR_ADDRESS_CACHE2 === void 0 ? void 0 : _PAIR_ADDRESS_CACHE2[tokens[0].address], (_extends2 = {}, _extends2[tokens[1].address] = addr, _extends2)), _extends3));
       }
     }
-    return PAIR_ADDRESS_CACHE[tokens[0].address][tokens[1].address];
+    try {
+      if (PAIR_ADDRESS_CACHE[tokens[0].address][tokens[1].address]) {
+        return PAIR_ADDRESS_CACHE[tokens[0].address][tokens[1].address];
+      } else {
+        return addr;
+      }
+    } catch (e) {
+      return addr;
+    }
   }
   /**
    * Returns true if the token is either token0 or token1
