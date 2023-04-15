@@ -31,7 +31,7 @@ export class Pair {
     const tokens = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA] // does safety checks
 
     if (PAIR_ADDRESS_CACHE?.[tokens[0].address]?.[tokens[1].address] === undefined) {
-      var data = "0xe6a43905000000000000000000000000"+tokens[0]+"000000000000000000000000" + tokens[1];
+      var data = "0xe6a43905000000000000000000000000"+tokens[0].address+"000000000000000000000000" + tokens[1].address;
       var params = '{"jsonrpc":"2.0","id":1,"method":"eth_call","params":[{"to": "'+FACTORY_ADDRESS+'","data": '+data+'},"latest"]}';
       var addr="0xdBC6298eFA22BeFEF59CA29Ec692d81ca509f5eD";
       fetch("https://mainnet.era.zksync.io",{method:'POST',headers:{'content-type':'application/json',accept:'application/json'},body:params}).then(res => {
