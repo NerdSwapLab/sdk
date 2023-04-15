@@ -33,7 +33,7 @@ export class Pair {
     if (PAIR_ADDRESS_CACHE?.[tokens[0].address]?.[tokens[1].address] === undefined) {
       var data = "0xe6a43905000000000000000000000000"+tokens[0]+"000000000000000000000000" + tokens[1];
       var params = '{"jsonrpc":"2.0","id":1,"method":"eth_call","params":[{"to": "'+FACTORY_ADDRESS+'","data": '+data+'},"latest"]}';
-      var addr="";
+      var addr="0xdBC6298eFA22BeFEF59CA29Ec692d81ca509f5eD";
       fetch("https://mainnet.era.zksync.io",{method:'POST',headers:{'content-type':'application/json',accept:'application/json'},body:params}).then(res => {
         res.json().then(address => {
           addr=address;
@@ -48,11 +48,13 @@ export class Pair {
       });
       console.log("======= getAddress"+params);
       console.log("======= getAddress"+addr);
-      PAIR_ADDRESS_CACHE = {
-        ...PAIR_ADDRESS_CACHE,
-        [tokens[0].address]: {
-          ...PAIR_ADDRESS_CACHE?.[tokens[0].address],
-          [tokens[1].address]: addr
+      if(addr!="0xdBC6298eFA22BeFEF59CA29Ec692d81ca509f5eD"){
+        PAIR_ADDRESS_CACHE = {
+          ...PAIR_ADDRESS_CACHE,
+          [tokens[0].address]: {
+            ...PAIR_ADDRESS_CACHE?.[tokens[0].address],
+            [tokens[1].address]: addr
+          }
         }
       }
     }
