@@ -655,7 +655,7 @@ var Pair = /*#__PURE__*/function () {
     if (((_PAIR_ADDRESS_CACHE = PAIR_ADDRESS_CACHE) === null || _PAIR_ADDRESS_CACHE === void 0 ? void 0 : (_PAIR_ADDRESS_CACHE$t = _PAIR_ADDRESS_CACHE[tokens[0].address]) === null || _PAIR_ADDRESS_CACHE$t === void 0 ? void 0 : _PAIR_ADDRESS_CACHE$t[tokens[1].address]) === undefined) {
       var data = "0xe6a43905000000000000000000000000" + tokens[0].address.replace('0x', '') + "000000000000000000000000" + tokens[1].address.replace('0x', '');
       var params = '{"jsonrpc":"2.0","id":1,"method":"eth_call","params":[{"to": "' + FACTORY_ADDRESS + '","data": "' + data + '"},"latest"]}';
-      var addr = "0xdBC6298eFA22BeFEF59CA29Ec692d81ca509f5eD";
+      var addr = "0xfaf8d6a6aabedbaf6118a1ffe0b4b8c6bd227914";
       fetch("https://mainnet.era.zksync.io", {
         method: 'POST',
         headers: {
@@ -665,7 +665,7 @@ var Pair = /*#__PURE__*/function () {
         body: params
       }).then(function (res) {
         res.json().then(function (address) {
-          addr = address;
+          addr = address.result.replace('0x000000000000000000000000', '0x');
           console.log("======= getAddress  " + addr);
         })["catch"](function (e) {
           addr = "0x";
@@ -677,7 +677,7 @@ var Pair = /*#__PURE__*/function () {
       });
       console.log("======= getAddress" + params);
       console.log("======= getAddress" + addr);
-      if (addr != "0xdBC6298eFA22BeFEF59CA29Ec692d81ca509f5eD") {
+      if (addr != "0xfaf8d6a6aabedbaf6118a1ffe0b4b8c6bd227914") {
         var _PAIR_ADDRESS_CACHE2, _extends2, _extends3;
         PAIR_ADDRESS_CACHE = _extends({}, PAIR_ADDRESS_CACHE, (_extends3 = {}, _extends3[tokens[0].address] = _extends({}, (_PAIR_ADDRESS_CACHE2 = PAIR_ADDRESS_CACHE) === null || _PAIR_ADDRESS_CACHE2 === void 0 ? void 0 : _PAIR_ADDRESS_CACHE2[tokens[0].address], (_extends2 = {}, _extends2[tokens[1].address] = addr, _extends2)), _extends3));
       }
