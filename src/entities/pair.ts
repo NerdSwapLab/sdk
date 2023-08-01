@@ -2,13 +2,13 @@ import { Price } from './fractions/price'
 import { TokenAmount } from './fractions/tokenAmount'
 import invariant from 'tiny-invariant'
 import JSBI from 'jsbi'
-// import { pack, keccak256 } from '@ethersproject/solidity'
-// import { getCreate2Address } from '@ethersproject/address'
+import { pack, keccak256 } from '@ethersproject/solidity'
+import { getCreate2Address } from '@ethersproject/address'
 
 import {
   BigintIsh,
   FACTORY_ADDRESS,
-  // INIT_CODE_HASH,
+  INIT_CODE_HASH,
   MINIMUM_LIQUIDITY,
   ZERO,
   ONE,
@@ -29,44 +29,22 @@ export class Pair {
 
   public static getAddress(tokenA: Token, tokenB: Token): string {
     const tokens = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA] // does safety checks
-    var addr="0xfaf8d6a6aabedbaf6118a1ffe0b4b8c6bd227914";
+
     if (PAIR_ADDRESS_CACHE?.[tokens[0].address]?.[tokens[1].address] === undefined) {
-      var data = "0xe6a43905000000000000000000000000"+tokens[0].address.replace('0x','')+"000000000000000000000000" + tokens[1].address.replace('0x','');
-      var params = '{"jsonrpc":"2.0","id":1,"method":"eth_call","params":[{"to": "'+FACTORY_ADDRESS+'","data": "'+data+'"},"latest"]}';
-      fetch("https://mainnet.era.zksync.io",{method:'POST',headers:{'content-type':'application/json',accept:'application/json'},body:params}).then(res => {
-        res.json().then(address => {
-          addr=address.result.replace('0x000000000000000000000000','0x');
-          console.log("======= getAddress  "+addr);
-        }).catch(e=>{
-          addr="0x";
-          console.log("======= getAddress error "+e);
-        });
-      }).catch(e=>{
-        addr="0x";
-        console.log("======= getAddress error 1 "+e);
-      });
-      console.log("======= getAddress"+params);
-      console.log("======= getAddress"+addr);
-      if(addr!="0xfaf8d6a6aabedbaf6118a1ffe0b4b8c6bd227914"){
-        PAIR_ADDRESS_CACHE = {
-          ...PAIR_ADDRESS_CACHE,
-          [tokens[0].address]: {
-            ...PAIR_ADDRESS_CACHE?.[tokens[0].address],
-            [tokens[1].address]: addr
-          }
+      PAIR_ADDRESS_CACHE = {
+        ...PAIR_ADDRESS_CACHE,
+        [tokens[0].address]: {
+          ...PAIR_ADDRESS_CACHE?.[tokens[0].address],
+          [tokens[1].address]: getCreate2Address(
+            FACTORY_ADDRESS,
+            keccak256(['bytes'], [pack(['address', 'address'], [tokens[0].address, tokens[1].address])]),
+            INIT_CODE_HASH
+          )
         }
       }
     }
 
-    try{
-      if(PAIR_ADDRESS_CACHE[tokens[0].address][tokens[1].address]){
-        return PAIR_ADDRESS_CACHE[tokens[0].address][tokens[1].address]
-      }else{
-        return addr;
-      }
-    }catch(e){
-      return addr;
-    }
+    return PAIR_ADDRESS_CACHE[tokens[0].address][tokens[1].address]
   }
 
   public constructor(tokenAmountA: TokenAmount, tokenAmountB: TokenAmount) {

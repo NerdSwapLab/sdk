@@ -10,8 +10,8 @@ import { ChainId } from './constants'
 import { Token } from './entities/token'
 
 let TOKEN_DECIMALS_CACHE: { [chainId: number]: { [address: string]: number } } = {
-  [ChainId.ZKS]: {
-    '0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4': 6 // usdc
+  [ChainId.BASE]: {
+    '0x4200000000000000000000000000000000000006': 18 // usdc
   }
 }
 
